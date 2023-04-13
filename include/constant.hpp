@@ -7,9 +7,8 @@ namespace global{
 	inline std::string_view desc = "petit programme en c++ pour tester les fihciers Makefile";
 }
 
-int genID(){
+inline int genID(){
 	static int s_id_gen = 0;
-
 	return ++s_id_gen;
 }
 
