@@ -1,7 +1,9 @@
-#gcc for c g++ foc c++
+# gcc for c g++ foc c++
 compiler = g++
-flag = -Wall -Weffc++ -Wextra -Wsign-conversion
 obj = build/main.o build/monster.o
+# -g for debug mode (for gbd) -O3 for release mod
+state = -g
+flag = -Wall -Weffc++ -Wextra -Wsign-conversion $(state)
 
 
 build/main : $(obj)
