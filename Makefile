@@ -15,6 +15,10 @@ build/main.o : src/main.cpp include/constant.hpp include/monster.hpp
 build/monster.o : src/monster.cpp include/constant.hpp
 	$(compiler) $(flag) -c src/monster.cpp -I include/ -o build/monster.o
 
+.PHONY : obj-clean
+obj-clean :
+	rm build/*.o
+
 .PHONY : clean
 clean :
 	rm -r build/*
