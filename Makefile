@@ -16,14 +16,15 @@ GREPFILE=$(shell echo $@ | sed 's/^.*\///g' | sed 's/\.o//g')
 GREPOBJ=$(shell echo $^ | sed 's/build\///g' | sed 's/\.o//g')
 SFILE=$(strip $(foreach S,$(SRCFILES),$(shell echo $(S) | grep $(GREPFILE) | grep ^\./$(SRCDIR)/)))
 TFILE=$(strip $(foreach S,$(SRCFILES),$(shell echo $(S) | grep $(GREPFILE) | grep ^\./$(TESTDIR)/)))
-OFILE=$(strip $(foreach S,$(SRCFILES),$(shell echo $(S) | grep "$(GREPOBJ)")))
+PAIN=$
 
 all : $(BIN)
 
 #$(CC) $(FLAGS) -o $@ $^
 $(BIN) : $(OBJ)
-	$(info $(GREPOBJ))
-	$(info )
+	$(info $(shell echo $^ | tr ' ' '\\n'))
+	$(info $(strip $(foreach S,$(SRCFILES),$(shell echo $(S) | grep \./$(SRCDIR)/ | sed "s/\.[^\.]*$(PAIN)//g" | sed "s/^.*\///g"))))
+#$(info $(shell echo $(SRCFILES) | grep "$^"))
 
 $(OBJ) : $(SRCFILES)
 	@[ "$(SFILE)" != "" ] && $(CC) $(FLAGS) -c -o $@ $(SFILE) || echo fail >/dev/null
@@ -34,8 +35,9 @@ run : all
 clean :
 	rm -rf build/*
 
+#make test file=test/testGenID.cpp
 test :
-	$(info file to test : $(file))
+	$(info test main file : $(file))
 
 dist : clean
 	tar zcvf build/$(PROJECTNAME).tgz *
