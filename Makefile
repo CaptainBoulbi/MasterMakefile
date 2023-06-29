@@ -6,13 +6,14 @@ CC=g++
 EXT=c cpp 
 OPT=-Og -g
 DEPFLAGS=-MP -MD
+EXTRAFLAGS=-lthread
 INCDIRS=include lib extra
 SRCDIR=src
 TESTDIR=test
 SRCFILES=$(foreach E,$(EXT),$(shell find . -name "*."$(E)))
 # good luck to read this shit
 OBJ=$(foreach O,$(filter %.o,$(foreach E,$(EXT),$(subst .$(E),.o,$(SRCFILES)))),$(shell echo $(O) | sed "s/^\\..*\//build\//g"))
-FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS)
+FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS) $(EXTRAFLAGS)
 GREPFILE=$(shell echo $@ | sed 's/^.*\///g' | sed 's/\.o//g')
 GREPOBJ=$(shell echo $^ | sed 's/build\///g' | sed 's/\.o//g')
 SFILE=$(strip $(foreach S,$(SRCFILES),$(shell echo $(S) | grep $(GREPFILE) | grep ^\./$(SRCDIR)/)))
