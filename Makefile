@@ -1,7 +1,8 @@
 # It's the dumbest and ugliest makefile that i ever seen, it probably have a million way to improve it, but it work, and for only that reason, i'm happy
 # note : malicious intent max
 
-BIN=build/main
+PROJECTNAME=hamood
+BIN=build/$(PROJECTNAME)
 CC=g++
 EXT=c cpp 
 OPT=-Og -g
