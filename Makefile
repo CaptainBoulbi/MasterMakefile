@@ -23,7 +23,6 @@ all : $(BIN)
 
 $(BIN) : $(OBJ)
 	$(CC) $(FLAGS) -o $@ $(strip $(foreach O,$(strip $(foreach S,$(SRCFILES),$(shell echo $(S) | grep \./$(SRCDIR)/ | sed "s/\.[^\.]*$(PAIN)//g" | sed "s/^.*\///g"))),$(foreach F,$(SRCFILES),$(shell echo $(F) | grep $(O)))))
-#$(info $(shell echo $(SRCFILES) | grep "$^"))
 
 $(OBJ) : $(SRCFILES)
 	@[ "$(SFILE)" != "" ] && $(CC) $(FLAGS) -c -o $@ $(SFILE) || echo fail >/dev/null
@@ -34,9 +33,12 @@ run : all
 clean :
 	rm -rf build/*
 
-#make test file=test/testGenID.cpp
-test :
+# make test file=test/testGenID.cpp
+test : $(OBJ)
 	$(info test main file : $(file))
+	$(CC) $(FLAGS) -o build/test test/$(file)
+	./build/test
+
 
 dist : clean
 	tar zcvf build/$(PROJECTNAME).tgz *
