@@ -1,6 +1,7 @@
 #include <iostream>
 #include "constant.hpp"
 #include "monster.hpp"
+#include "sub.hpp"
 
 void getInfo(){
 	std::cout << std::endl;
@@ -12,6 +13,8 @@ void getInfo(){
 }
 
 int main(){
+	printHI();
+
 	getInfo();
 
 	int vague1[10];

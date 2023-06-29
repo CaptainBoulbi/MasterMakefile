@@ -1,4 +1,5 @@
 # It's the dumbest and ugliest makefile that i ever seen, it probably have a million way to improve it, but it work, and for only that reason, i'm happy
+# note : malicious intent max
 
 BIN=build/main
 CC=g++
@@ -20,10 +21,8 @@ PAIN=$
 
 all : $(BIN)
 
-#$(CC) $(FLAGS) -o $@ $^
 $(BIN) : $(OBJ)
-	$(info $(shell echo $^ | tr ' ' '\\n'))
-	$(info $(strip $(foreach S,$(SRCFILES),$(shell echo $(S) | grep \./$(SRCDIR)/ | sed "s/\.[^\.]*$(PAIN)//g" | sed "s/^.*\///g"))))
+	$(CC) $(FLAGS) -o $@ $(strip $(foreach O,$(strip $(foreach S,$(SRCFILES),$(shell echo $(S) | grep \./$(SRCDIR)/ | sed "s/\.[^\.]*$(PAIN)//g" | sed "s/^.*\///g"))),$(foreach F,$(SRCFILES),$(shell echo $(F) | grep $(O)))))
 #$(info $(shell echo $(SRCFILES) | grep "$^"))
 
 $(OBJ) : $(SRCFILES)
