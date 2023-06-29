@@ -85,20 +85,23 @@
 PROJECTNAME=hamood
 BIN=build/$(PROJECTNAME)
 CC=g++
-EXT=cpp c
+EXT=c cpp 
 OPT=-Og -g
 DEPFLAGS=-MP -MD
 INCDIRS=. include lib extra
 SRCFILES=$(foreach E,$(EXT),$(shell find . -name "*."$(E)))
-#OBJ=$(filter %.o,$(foreach E,$(EXT),$(subst .$(E),.o,$(SRCFILES))))
-OBJ=$(patsubst ./%,build/%,$(filter %.o,$(foreach E,$(EXT),$(subst .$(E),.o,$(SRCFILES)))))
+#good luck to read this shit
+OBJ=$(foreach O,$(filter %.o,$(foreach E,$(EXT),$(subst .$(E),.o,$(SRCFILES)))),$(shell echo $(O) | sed "s/^\\..*\//build\//g"))
+#OBJ=$(patsubst ./%,build/%,$(filter %.o,$(foreach E,$(EXT),$(subst .$(E),.o,$(SRCFILES)))))
 FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS)
 
 
 all : $(BIN)
+#all :
+#	$(info $(OBJ))
 
 $(BIN) : $(OBJ)
-	$(CC) -o $@ $^
+	$(CC) $(FLAGS) -o $@ $^
 
 $(OBJ) : $(SRCFILES)
 	$(CC) $(FLAGS) -c -o $@ $<
@@ -112,7 +115,20 @@ clean :
 test :
 	$(info file to test : $(file))
 
-archive : clean
+dist : clean
 	tar zcvf build/$(PROJECTNAME).tgz *
 
-.PHONY : run clean test archive
+analyse :
+	cppcheck --enable=all --suppress=missingIncludeSystem -I include/ .
+	flawfinder .
+
+info :
+	$(info project name : $(PROJECTNAME))
+	$(info compiler : $(CC))
+	$(info source file extension : $(EXT))
+	$(info optimization flags : $(OPT))
+	$(info )
+	$(info git stat :)
+	@gitinspector .
+
+.PHONY : all run clean test dist analyse info
