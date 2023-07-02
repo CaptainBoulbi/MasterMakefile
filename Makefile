@@ -1,63 +1,57 @@
-# It's the dumbest and ugliest makefile that i ever seen, it probably have a million way to improve it, but it work, and for only that reason, i'm happy
+# It's the dumbest and ugliest makefile that i ever seen, it probably have a million way
+# to improve it, but it work, and for only that reason, i'm happy
 # note : malicious intent max
+# update : it's better now
 
-PROJECTNAME=hamood
-BIN=build/$(PROJECTNAME)
+PROJECTNAME=OMTRTA
+BIN=$(BUILDDIR)/$(PROJECTNAME)
 CC=g++
-EXT=c cpp 
+
 OPT=-Og -g
-DEPFLAGS=-MP -MD
 EXTRAFLAGS=
+DEPFLAGS=-MP -MD
+FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS) $(EXTRAFLAGS)
+
 INCDIRS=include lib extra
 SRCDIR=src
+BUILDDIR=build
 TESTDIR=test
-SRCFILES=$(foreach E,$(EXT),$(shell find . -name "*."$(E)))
-# good luck to read this shit
-OBJ=$(foreach O,$(filter %.o,$(foreach E,$(EXT),$(subst .$(E),.o,$(SRCFILES)))),$(shell echo $(O) | sed "s/^\\..*\//build\//g"))
-FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS) $(EXTRAFLAGS)
-GREPFILE=$(shell echo $@ | sed 's/^.*\///g' | sed 's/\.o//g')
-GREPOBJ=$(shell echo $^ | sed 's/build\///g' | sed 's/\.o//g')
-SFILE=$(strip $(foreach S,$(SRCFILES),$(shell echo $(S) | grep $(GREPFILE) | grep ^\./$(SRCDIR)/)))
-TFILE=$(strip $(foreach S,$(SRCFILES),$(shell echo $(S) | grep $(GREPFILE) | grep ^\./$(TESTDIR)/)))
-PAIN=$
+
+EXT=cpp c
+SRC=$(foreach E,$(EXT),$(shell find . -name "*."$(E) -path "./$(SRCDIR)/*"))
+FILE=$(foreach S,$(SRC),$(shell echo "$(S)" | sed "s/\.\/.*\///g" | sed "s/\.[^.]*$$//g"))
+OBJ=$(foreach F,$(FILE),./$(BUILDDIR)/$(F).o)
 
 all : $(BIN)
 
 $(BIN) : $(OBJ)
-	$(CC) $(FLAGS) -o $@ $(strip $(foreach O,$(strip $(foreach S,$(SRCFILES),$(shell echo $(S) | grep \./$(SRCDIR)/ | sed "s/\.[^\.]*$(PAIN)//g" | sed "s/^.*\///g"))),$(foreach F,$(SRCFILES),$(shell echo $(F) | grep $(O)))))
+	$(CC) $(FLAGS) -o $(BIN) $^
 
-$(OBJ) : $(SRCFILES)
-	@[ "$(SFILE)" != "" ] && $(CC) $(FLAGS) -c -o $@ $(SFILE) || echo fail >/dev/null
+$(OBJ) : $(SRC)
+	$(CC) $(FLAGS) -c -o $@ $<
 
 run : all
 	./$(BIN)
 
 clean :
-	rm -rf build/*
+	rm -r $(BUILDDIR)/*
 
-# make test file=test/testGenID.cpp
-test : $(OBJ)
-	$(info test main file : $(file))
-	$(CC) $(FLAGS) -o build/test test/$(file)
-	./build/test
+# make test file=testGenID.cpp
+test : $(OBJ) $(TESTDIR)/$(file)
+	$(CC) $(FLAGS) -o $(BUILDDIR)/test $(TESTDIR)/$(file)
+	./$(BUILDDIR)/test
 
-
+# unzip : tar -xvf exemple.tgz
+# -C flag to unzip in an other folder
 dist : clean
-	tar zcvf build/$(PROJECTNAME).tgz *
+	tar zcvf $(BUILDDIR)/$(PROJECTNAME).tgz *
 
 check :
 	cppcheck --enable=all --suppress=missingIncludeSystem $(foreach I,$(INCDIRS),-I$(I)) .
-	@echo
-	@echo "\033[1;31m===============================================================================\033[0m"
-	@echo
 	flawfinder .
 
 info :
-	$(info compiler : $(CC))
-	$(info source file extension : $(EXT))
-	$(info optimization flags : $(OPT))
-	$(info )
-	$(info git stat :)
-	@gitinspector . 2>/dev/null
+	$(info put what ever)
+	@echo you want
 
 .PHONY : all run clean test dist check info
