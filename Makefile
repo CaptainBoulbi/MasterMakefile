@@ -51,4 +51,4 @@ info :
 	$(info put what ever)
 	@echo you want
 
-.PHONY : all run clean test test-compile dist check info
+.PHONY : all run clean test dist check info
