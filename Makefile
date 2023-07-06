@@ -1,45 +1,45 @@
-# It's the dumbest and ugliest makefile that i ever seen, it probably have a million way to improve it, but it work, and for only that reason, i'm happy
-# note : malicious intent max
-# update : it's better now
-
-PROJECTNAME=OMTRTA
-BIN=build/$(PROJECTNAME)
+ROJECTNAME=OMTRTA
+BIN=build/$(ROJECTNAME)
 CC=g++
 
-OPT=-Og -g
+EXT=cpp
+INCDIRS=include lib
+
+ifneq ($(mode), release)
+	OPT=-Og -g
+else
+	OPT=-O3
+endif
 EXTRAFLAGS=
 DEPFLAGS=-MP -MD
 FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS) $(EXTRAFLAGS)
 
-INCDIRS=include lib extra
-SRCDIRS=src lib extra
+SRC=$(shell find . -name "*.$(EXT)" -path "./src/*")
+OBJ=$(subst ./src/,./build/,$(SRC:.$(EXT)=.o))
 
-EXT=cpp c
-SRC=$(foreach S,$(SRCDIRS),$(foreach E,$(EXT),$(shell find . -name "*."$(E) -path "./$(S)/*")))
-FILE=$(shell echo $(SRC) | tr ' ' '\n' | sed "s/\.\/.*\///g" | sed "s/\.[^.]*$$//g")
-OBJ=$(foreach F,$(FILE),./build/$(F).o)
+$(shell mkdir -p build)
 
 all : $(BIN)
 
 $(BIN) : $(OBJ)
-	$(CC) $(FLAGS) -o $(BIN) $(OBJ)
+	$(CC) $(FLAGS) -o $@ $^
 
-$(OBJ) : $(shell echo "$(SRC)" | grep -o "[^ ]*$(word $(call pos,$@,$(OBJ)),$(FILE))[^ ]*")
-	$(CC) $(FLAGS) -c -o $@ $<
+build/%.o: src/%.$(EXT)
+	@mkdir -p $(@D)
+	$(CC) $(FLAGS) -o $@ -c $<
 
 run : all
 	./$(BIN)
 
 clean :
-	rm -r build/*
+	rm -rf build/*
 
 # make test file=testGenID.cpp
-test : $(OBJ) test/$(file)
-	$(CC) $(FLAGS) -o build/test test/$(file)
-	./build/test
+test : all test/$(file)
+	$(CC) $(FLAGS) -o build/$(file:.$(EXT)=) test/$(file)
+	./build/$(file:.$(EXT)=)
 
 # unzip : tar -xvf exemple.tgz
-# -C flag to unzip in an other folder
 dist : clean
 	tar zcvf build/$(PROJECTNAME).tgz *
 
@@ -51,4 +51,4 @@ info :
 	$(info put what ever)
 	@echo you want
 
-.PHONY : all run clean test dist check info
+.PHONY : all run clean test test-compile dist check info
