@@ -35,7 +35,7 @@ clean :
 	rm -rf build/*
 
 # make test file=testGenID.cpp
-test : all test/$(file)
+test : $(OBJ) test/$(file)
 	$(CC) $(FLAGS) -o build/$(file:.$(EXT)=) test/$(file)
 	./build/$(file:.$(EXT)=)
 
