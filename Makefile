@@ -5,6 +5,7 @@ CC=g++
 EXT=cpp
 INCDIRS=include lib
 
+# make mode=release
 ifneq ($(mode), release)
 	OPT=-Og -g
 else
@@ -16,6 +17,7 @@ FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS) $(EXTRAFLA
 
 SRC=$(shell find . -name "*.$(EXT)" -path "./src/*")
 OBJ=$(subst ./src/,./build/,$(SRC:.$(EXT)=.o))
+DEP=$(OBJ:.o=.d)
 
 $(shell mkdir -p build)
 
@@ -23,6 +25,8 @@ all : $(BIN)
 
 $(BIN) : $(OBJ)
 	$(CC) $(FLAGS) -o $@ $^
+
+-include $(DEP)
 
 build/%.o: src/%.$(EXT)
 	@mkdir -p $(@D)
