@@ -46,9 +46,9 @@ test : $(OBJ)
 alltest :
 	@for f in $(subst ./test/,,$(TEST)); do make -s test file=$$f; done
 
-# unzip : tar -xvf exemple.tgz
+# unzip : mkdir exemple && tar -xvf exemple.tgz -C exemple
 dist : clean
-	tar zcvf build/$(PROJECTNAME).tgz *
+	tar zcvf build/$(PROJECTNAME).tgz .
 
 check :
 	cppcheck --enable=all --suppress=missingIncludeSystem $(foreach I,$(INCDIRS),-I$(I)) .
