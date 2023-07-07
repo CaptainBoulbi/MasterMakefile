@@ -1,19 +1,18 @@
-ROJECTNAME=OMTRTA
-BIN=build/$(ROJECTNAME)
+PROJECTNAME=OMTRTA
+BIN=build/$(PROJECTNAME)
 CC=g++
 
 EXT=cpp
 INCDIRS=include lib
 
 # make mode=release
-ifneq ($(mode), release)
-	OPT=-Og -g
-else
+ifeq ($(mode), release)
 	OPT=-O3
+else
+	OPT=-Og -g
 endif
-EXTRAFLAGS=
 DEPFLAGS=-MP -MD
-FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS) $(EXTRAFLAGS)
+FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS)
 
 SRC=$(shell find . -name "*.$(EXT)" -path "./src/*")
 OBJ=$(subst ./src/,./build/,$(SRC:.$(EXT)=.o))
@@ -39,7 +38,7 @@ clean :
 	rm -rf build/*
 
 # make test file=testGenID.cpp
-test : $(OBJ) test/$(file)
+test : $(OBJ)
 	$(CC) $(FLAGS) -o build/$(file:.$(EXT)=) test/$(file)
 	./build/$(file:.$(EXT)=)
 
