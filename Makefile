@@ -17,6 +17,7 @@ FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS)
 SRC=$(shell find . -name "*.$(EXT)" -path "./src/*")
 OBJ=$(subst ./src/,./build/,$(SRC:.$(EXT)=.o))
 DEP=$(OBJ:.o=.d)
+TEST=$(shell find . -name "*.$(EXT)" -path "./test/*")
 
 $(shell mkdir -p build)
 
@@ -27,7 +28,7 @@ $(BIN) : $(OBJ)
 
 -include $(DEP)
 
-build/%.o: src/%.$(EXT)
+build/%.o : src/%.$(EXT)
 	@mkdir -p $(@D)
 	$(CC) $(FLAGS) -o $@ -c $<
 
@@ -42,6 +43,9 @@ test : $(OBJ)
 	$(CC) $(FLAGS) -o build/$(file:.$(EXT)=) test/$(file)
 	./build/$(file:.$(EXT)=)
 
+alltest :
+	@for f in $(subst ./test/,,$(TEST)); do make -s test file=$$f; done
+
 # unzip : tar -xvf exemple.tgz
 dist : clean
 	tar zcvf build/$(PROJECTNAME).tgz *
@@ -54,4 +58,4 @@ info :
 	$(info put what ever)
 	@echo you want
 
-.PHONY : all run clean test dist check info
+.PHONY : all run clean test alltest dist check info
