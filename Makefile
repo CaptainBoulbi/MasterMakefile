@@ -33,7 +33,7 @@ build/%.o : src/%.$(EXT)
 	$(CC) $(FLAGS) -o $@ -c $<
 
 run : all
-	./$(BIN)
+	./$(BIN) $(input)
 
 clean :
 	rm -rf build/*
