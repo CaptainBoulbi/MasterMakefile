@@ -46,10 +46,6 @@ test : $(OBJ)
 alltest :
 	@for f in $(subst ./test/,,$(TEST)); do make -s test file=$$f; done
 
-# unzip : mkdir exemple && tar -xvf exemple.tgz -C exemple
-dist : clean
-	tar zcvf build/$(PROJECTNAME).tgz .
-
 check :
 	cppcheck --enable=all --suppress=missingIncludeSystem $(foreach I,$(INCDIRS),-I$(I)) .
 	flawfinder .
@@ -58,4 +54,9 @@ info :
 	$(info put what ever)
 	@echo you want
 
-.PHONY : all run clean test alltest dist check info
+# unzip : mkdir exemple && tar -xvf exemple.tgz -C exemple
+dist : clean
+	$(info /!\ project folder has to be named $(PROJECTNAME) /!\ )
+	cd .. && tar zcvf $(PROJECTNAME)/build/$(PROJECTNAME).tgz $(PROJECTNAME) >/dev/null
+
+.PHONY : all run clean test alltest check info dist 
