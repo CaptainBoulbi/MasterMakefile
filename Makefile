@@ -56,7 +56,7 @@ info :
 	$(info put what ever)
 	@echo you want
 
-# unzip : mkdir exemple && tar -xvf exemple.tgz -C exemple
+# unzip : tar -xvf exemple.tgz
 dist : clean
 	$(info /!\ project folder has to be named $(PROJECTNAME) /!\ )
 	cd .. && tar zcvf $(PROJECTNAME)/build/$(PROJECTNAME).tgz $(PROJECTNAME) >/dev/null
