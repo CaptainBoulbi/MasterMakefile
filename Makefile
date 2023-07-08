@@ -44,7 +44,9 @@ test : $(OBJ)
 	./build/$(file:.$(EXT)=)
 
 alltest :
-	@for f in $(subst ./test/,,$(TEST)); do make -s test file=$$f; done
+	@for f in $(subst ./test/,,$(TEST)); do \
+		$(CC) $(FLAGS) -o build/$${f%.$(EXT)} test/$$f && ./build/$${f%.$(EXT)};\
+		done
 
 check :
 	cppcheck --enable=all --suppress=missingIncludeSystem $(foreach I,$(INCDIRS),-I$(I)) .
