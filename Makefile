@@ -17,6 +17,7 @@ FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS)
 SRC=$(shell find . -name "*.$(EXT)" -path "./src/*")
 OBJ=$(subst ./src/,./build/,$(SRC:.$(EXT)=.o))
 DEP=$(OBJ:.o=.d)
+ASM=$(OBJ:.o=.asm)
 TEST=$(shell find . -name "*.$(EXT)" -path "./test/*")
 
 $(shell mkdir -p build)
@@ -39,14 +40,15 @@ clean :
 	rm -rf build/*
 
 # make test file=testGenID.cpp
-test : $(OBJ)
-	$(CC) $(FLAGS) -o build/$(file:.$(EXT)=) test/$(file)
-	./build/$(file:.$(EXT)=)
+test : build/$(file:.$(EXT)=.test)
+	./build/$(file:.$(EXT)=.test)
 
-alltest :
-	@for f in $(subst ./test/,,$(TEST)); do \
-		$(CC) $(FLAGS) -o build/$${f%.$(EXT)} test/$$f && ./build/$${f%.$(EXT)};\
-		done
+alltest : $(subst ./test/,./build/,$(TEST:.$(EXT)=.test))
+	for i in $$(ls build/*.test); do echo $$i; $$i; done
+
+build/%.test : test/%.$(EXT)
+	@mkdir -p $(@D)
+	$(CC) $(FLAGS) -o $@ $<
 
 check :
 	cppcheck --enable=all --suppress=missingIncludeSystem $(foreach I,$(INCDIRS),-I$(I)) .
@@ -61,4 +63,13 @@ dist : clean
 	$(info /!\ project folder has to be named $(PROJECTNAME) /!\ )
 	cd .. && tar zcvf $(PROJECTNAME)/build/$(PROJECTNAME).tgz $(PROJECTNAME) >/dev/null
 
-.PHONY : all run clean test alltest check info dist 
+asm : $(ASM) #$(BIN)
+	#objdump -drwC -Mintel -S $(BIN) > $(BIN).asm
+
+build/%.asm : src/%.$(EXT)
+	@mkdir -p $(@D)
+	$(CC) $(FLAGS) -S $^ -o $@
+
+debug :
+
+.PHONY : all run clean test alltest check info dist asm debug
