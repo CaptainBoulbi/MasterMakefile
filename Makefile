@@ -63,8 +63,8 @@ dist : clean
 	$(info /!\ project folder has to be named $(PROJECTNAME) /!\ )
 	cd .. && tar zcvf $(PROJECTNAME)/build/$(PROJECTNAME).tgz $(PROJECTNAME) >/dev/null
 
-asm : $(ASM) #$(BIN)
-	#objdump -drwC -Mintel -S $(BIN) > $(BIN).asm
+asm : $(ASM) $(BIN)
+	objdump -drwC -Mintel -S $(BIN) > $(BIN).asm
 
 build/%.asm : src/%.$(EXT)
 	@mkdir -p $(@D)
