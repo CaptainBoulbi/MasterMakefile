@@ -70,6 +70,7 @@ build/%.asm : src/%.$(EXT)
 	@mkdir -p $(@D)
 	$(CC) $(FLAGS) -S $^ -o $@
 
-debug :
+debug : $(BIN)
+	gdb $(BIN) $(input)
 
 .PHONY : all run clean test alltest check info dist asm debug
