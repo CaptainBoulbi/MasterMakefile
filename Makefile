@@ -85,4 +85,9 @@ build/%.i : src/%.$(EXT)
 
 gigall : all asm preprocess $(TESTO)
 
-.PHONY : all run clean test alltest check info dist asm debug preprocess gigall
+install : dist
+	cp Makefile ../script
+	mv build/OMTRTA.tgz ../opt/archive
+	cd .. && rm -rf OMTRTA
+
+.PHONY : all run clean test alltest check info dist asm debug preprocess gigall install
