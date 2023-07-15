@@ -3,7 +3,8 @@ BIN=build/$(PROJECTNAME)
 CC=g++
 
 EXT=cpp
-INCDIRS=include lib
+INCFOLDERS=include lib
+INCDIRS=$(foreach I,$(INCFOLDERS),$(shell find $(I) -type d))
 
 # make mode=release
 ifeq ($(mode), release)
