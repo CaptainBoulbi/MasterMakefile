@@ -18,7 +18,7 @@ FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS)
 SRC=$(shell find . -name "*.$(EXT)" -path "./src/*")
 OBJ=$(subst ./src/,./build/,$(SRC:.$(EXT)=.o))
 DEP=$(OBJ:.o=.d)
-ASM=$(OBJ:.o=.asm)
+ASM=$(OBJ:.o=.s)
 TEST=$(shell find . -name "*.$(EXT)" -path "./test/*")
 
 $(shell mkdir -p build)
@@ -64,14 +64,22 @@ dist : clean
 	$(info /!\ project folder has to be named $(PROJECTNAME) /!\ )
 	cd .. && tar zcvf $(PROJECTNAME)/build/$(PROJECTNAME).tgz $(PROJECTNAME) >/dev/null
 
-asm : $(ASM) $(BIN)
-	objdump -drwC -Mintel -S $(BIN) > $(BIN).asm
+asm : $(ASM) $(BIN) $(BIN).s
 
-build/%.asm : src/%.$(EXT)
+build/%.s : src/%.$(EXT)
 	@mkdir -p $(@D)
 	$(CC) $(FLAGS) -S $^ -o $@
+
+$(BIN).s :
+	objdump -drwC -Mintel -S $(BIN) > $(BIN).s
 
 debug : $(BIN)
 	gdb $(BIN) $(input)
 
-.PHONY : all run clean test alltest check info dist asm debug
+preprocess : $(OBJ:.o=.i)
+
+build/%.i : src/%.$(EXT)
+	@mkdir -p $(@D)
+	$(CC) $(FLAGS) -E $^ -o $@
+
+.PHONY : all run clean test alltest check info dist asm debug preprocess
