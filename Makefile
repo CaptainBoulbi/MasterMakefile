@@ -90,4 +90,8 @@ install : dist
 	mv build/OMTRTA.tgz ../opt/archive
 	cd .. && rm -rf OMTRTA
 
-.PHONY : all run clean test alltest check info dist asm debug preprocess gigall install
+push :
+	git push bbsrv
+	git push gh
+
+.PHONY : all run clean test alltest check info dist asm debug preprocess gigall install push
