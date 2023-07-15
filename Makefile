@@ -4,7 +4,7 @@ CC=g++
 
 EXT=cpp
 INCFOLDERS=include lib
-INCDIRS=$(foreach I,$(INCFOLDERS),$(shell find $(I) -type d))
+INCDIRS=$(foreach I,$(INCFOLDERS),$(shell find $(I) -type d 2>/dev/null))
 
 # make mode=release
 ifeq ($(mode), release)
@@ -20,6 +20,7 @@ OBJ=$(subst ./src/,./build/,$(SRC:.$(EXT)=.o))
 DEP=$(OBJ:.o=.d)
 ASM=$(OBJ:.o=.s)
 TEST=$(shell find . -name "*.$(EXT)" -path "./test/*")
+TESTO=$(subst ./test/,./build/,$(TEST:.$(EXT)=.test))
 
 $(shell mkdir -p build)
 
@@ -44,7 +45,7 @@ clean :
 test : build/$(file:.$(EXT)=.test)
 	./build/$(file:.$(EXT)=.test)
 
-alltest : $(subst ./test/,./build/,$(TEST:.$(EXT)=.test))
+alltest : $(TESTO)
 	for i in $$(ls build/*.test); do echo $$i; $$i; done
 
 build/%.test : test/%.$(EXT)
@@ -82,4 +83,6 @@ build/%.i : src/%.$(EXT)
 	@mkdir -p $(@D)
 	$(CC) $(FLAGS) -E $^ -o $@
 
-.PHONY : all run clean test alltest check info dist asm debug preprocess
+gigall : all asm preprocess $(TESTO)
+
+.PHONY : all run clean test alltest check info dist asm debug preprocess gigall
