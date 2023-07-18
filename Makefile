@@ -20,7 +20,7 @@ OBJ=$(subst ./src/,./build/,$(SRC:.$(EXT)=.o))
 DEP=$(OBJ:.o=.d)
 ASM=$(OBJ:.o=.s)
 TEST=$(shell find . -name "*.$(EXT)" -path "./test/*")
-TESTO=$(subst ./test/,./build/,$(TEST:.$(EXT)=.test))
+TESTO=$(subst ./test/,./build/,$(TEST:.$(EXT)=.t))
 
 $(shell mkdir -p build)
 
@@ -42,13 +42,13 @@ clean :
 	rm -rf build/*
 
 # make test file=testGenID.cpp
-test : build/$(file:.$(EXT)=.test)
-	./build/$(file:.$(EXT)=.test)
+test : build/$(file:.$(EXT)=.t)
+	./build/$(file:.$(EXT)=.t)
 
 alltest : $(TESTO)
-	for i in $$(ls build/*.test); do echo $$i; $$i; done
+	@for i in $(TESTO); do echo $$i; $$i; done
 
-build/%.test : test/%.$(EXT)
+build/%.t : test/%.$(EXT)
 	@mkdir -p $(@D)
 	$(CC) $(FLAGS) -o $@ $<
 
