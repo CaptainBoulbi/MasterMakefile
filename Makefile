@@ -72,6 +72,7 @@ build/%.i : src/%.$(EXT)
 
 gigall : $(BIN) $(TESTO) asm preprocess
 
+# make run input="program input"
 run : $(BIN)
 	./$< $(input)
 
