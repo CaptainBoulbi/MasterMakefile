@@ -4,7 +4,12 @@ CC=g++
 
 EXT=cpp
 INCFOLDERS=include lib
-INCDIRS=$(foreach I,$(INCFOLDERS),$(shell find $(I) -type d 2>/dev/null))
+RECURSIVE_INCLUDE=false
+ifeq ($(RECURSIVE_INCLUDE),true)
+	INCDIRS=$(foreach I,$(INCFOLDERS),$(shell find $(I) -type d 2>/dev/null))
+else
+	INCDIRS=$(INCFOLDERS)
+endif
 
 # make mode=release
 ifeq ($(mode), release)
@@ -17,6 +22,8 @@ FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS)
 
 SRC=$(shell find . -name "*.$(EXT)" -path "./src/*")
 OBJ=$(subst ./src/,./build/,$(SRC:.$(EXT)=.o))
+LIB=$(shell find . -name "*.$(EXT)" -path "./lib/*")
+LIBO=$(subst ./lib/,./build/,$(LIB:.$(EXT)=.o))
 DEP=$(OBJ:.o=.d)
 ASM=$(OBJ:.o=.s)
 TEST=$(shell find . -name "*.$(EXT)" -path "./test/*")
@@ -26,7 +33,7 @@ $(shell mkdir -p build)
 
 all : $(BIN)
 
-$(BIN) : $(OBJ)
+$(BIN) : $(OBJ) $(LIBO)
 	$(CC) $(FLAGS) -o $@ $^
 
 -include $(DEP)
@@ -34,8 +41,11 @@ $(BIN) : $(OBJ)
 build/%.o : src/%.$(EXT)
 	@mkdir -p $(@D)
 	$(CC) $(FLAGS) -o $@ -c $<
+build/%.o : lib/%.$(EXT)
+	@mkdir -p $(@D)
+	$(CC) $(FLAGS) -o $@ -c $<
 
-run : all
+run : $(BIN)
 	./$(BIN) $(input)
 
 clean :
@@ -83,7 +93,7 @@ build/%.i : src/%.$(EXT)
 	@mkdir -p $(@D)
 	$(CC) $(FLAGS) -E $^ -o $@
 
-gigall : all asm preprocess $(TESTO)
+gigall : $(BIN) asm preprocess $(TESTO)
 
 install : dist
 	cp Makefile ../script

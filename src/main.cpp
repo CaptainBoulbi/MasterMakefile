@@ -2,6 +2,7 @@
 #include "constant.hpp"
 #include "monster.hpp"
 #include "sub.hpp"
+#include "lib.hpp"
 
 void getInfo(){
 	std::cout << std::endl;
@@ -17,6 +18,8 @@ int main(int argc, char** argv){
    for(int i=1; i<argc; ++i){
       std::cout << argv[i] << std::endl;
    }
+
+   libibi();
 
 	printHI();
 
