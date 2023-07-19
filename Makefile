@@ -45,8 +45,8 @@ build/%.o : lib/%.$(EXT)
 	$(CC) $(FLAGS) -o $@ -c $<
 
 # make test file=testGenID.cpp
-test : build/$(file:.$(EXT)=.t)
-	./build/$(file:.$(EXT)=.t)
+test : build/$(file).t
+	./build/$(file).t
 
 alltest : $(TESTO)
 	@for i in $(TESTO); do echo $$i; $$i; done
