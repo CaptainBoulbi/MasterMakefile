@@ -116,4 +116,4 @@ p : push
 
 d : debug
 
-.PHONY : all test alltest asm preprocess gigall run clean check debug dist push install info
+.PHONY : all test t alltest asm preprocess gigall run r clean check c debug d dist push p install info
