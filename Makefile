@@ -104,4 +104,16 @@ info :
 	$(info put what ever)
 	@echo you want
 
+# alias
+
+r : run
+
+t : test
+
+c : check
+
+p : push
+
+d : debug
+
 .PHONY : all test alltest asm preprocess gigall run clean check debug dist push install info
