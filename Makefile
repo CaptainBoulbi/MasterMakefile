@@ -1,4 +1,4 @@
-PROJECTNAME=OMTRTA
+PROJECTNAME=MasterMakefile
 BIN=build/$(PROJECTNAME)
 CC=g++
 
