@@ -98,7 +98,7 @@ push :
 install : dist
 	cp Makefile ../script
 	mv build/$(PROJECTNAME).tgz ../opt/archive
-	cd .. && rm -rf OMTRTA
+	cd .. && rm -rf $(PROJECTNAME)
 
 info :
 	$(info put what ever)
