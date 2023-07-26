@@ -15,6 +15,13 @@ void getInfo(){
 
 int main(int argc, char** argv){
 
+	#ifdef HW
+	std::cout << "Hello World!" << std::endl;
+	#endif
+	#ifdef PI
+	std::cout << "2" << PI << "²" << std::endl;
+	#endif
+
    for(int i=1; i<argc; ++i){
       std::cout << argv[i] << std::endl;
    }

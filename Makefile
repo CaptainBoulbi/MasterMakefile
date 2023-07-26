@@ -18,7 +18,8 @@ else
 	OPT=-Og -g
 endif
 DEPFLAGS=-MP -MD
-FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS)
+MACROS=HW PI=3.14
+FLAGS=-Wall -Wextra $(foreach F,$(INCDIRS),-I$(F)) $(OPT) $(DEPFLAGS) $(foreach M,$(MACROS),-D$(M))
 
 SRC=$(shell find . -name "*.$(EXT)" -path "./src/*")
 OBJ=$(subst ./src/,./build/,$(SRC:.$(EXT)=.o))
